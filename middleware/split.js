@@ -3,11 +3,8 @@ const app = express()
 
 
 const calculateSplit = (req,res,next) => {
-
-    console.log(req.body)
-
-    var SplitBreakdown = []
     
+    req.SplitBreakdown = []
     const INITIAL_AMOUNT = req.body.Amount
     var currentAmount = INITIAL_AMOUNT
     var balance = currentAmount
@@ -22,14 +19,14 @@ const calculateSplit = (req,res,next) => {
     flats.forEach((flat) => {
         const returnValue = calculateFlats(currentAmount,flat.SplitValue)
         currentAmount = balance = returnValue.balance
-        SplitBreakdown.push({SplitEntityId:flat.SplitEntityId,Amount:returnValue.amount})
+        req.SplitBreakdown.push({SplitEntityId:flat.SplitEntityId,Amount:returnValue.amount})
     })
 
 
     percentages.forEach((percentage) => {
         const returnValue = calculatePercentages(currentAmount,percentage.SplitValue)
         currentAmount = balance = returnValue.balance
-        SplitBreakdown.push({SplitEntityId:percentage.SplitEntityId,Amount:returnValue.amount})
+        req.SplitBreakdown.push({SplitEntityId:percentage.SplitEntityId,Amount:returnValue.amount})
     })
 
     ratios.forEach((ratio) => {
@@ -39,7 +36,7 @@ const calculateSplit = (req,res,next) => {
     ratios.forEach((ratio) => {
         const returnValue = calculateRatios(currentAmount,balance,ratio.SplitValue,totalRatio)
         balance = returnValue.balance
-        SplitBreakdown.push({SplitEntityId:ratio.SplitEntityId,Amount:returnValue.amount})
+        req.SplitBreakdown.push({SplitEntityId:ratio.SplitEntityId,Amount:returnValue.amount})
 
     })
 
@@ -48,7 +45,6 @@ const calculateSplit = (req,res,next) => {
     // console.log(balance)
 
     req.Balance = balance
-    req.SplitBreakdown = SplitBreakdown
     next()
 }
 
